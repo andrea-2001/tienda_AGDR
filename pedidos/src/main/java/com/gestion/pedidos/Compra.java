@@ -1,6 +1,8 @@
 package com.gestion.pedidos;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -45,11 +48,17 @@ public class Compra {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+    
+ // RELACIÓN N:N (Mapeada a través de la tabla de unión ArticuloCompra)
+    // Se mapea como una relación Uno a Muchos (1:N) con la entidad ArticuloCompra
+    @OneToMany(mappedBy = "compra")
+    private Set<ArticuloCompra> articulosCompra = new HashSet<>();
 
     public Compra() {
         this.estado = EstadoCompra.PENDIENTE;
     }
 
+ // Getters y Setters
     public int getId() {
         return id;
     }
@@ -100,6 +109,28 @@ public class Compra {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public Set<ArticuloCompra> getArticulosCompra() {
+        return articulosCompra;
+    }
+
+    public void setArticulosCompra(Set<ArticuloCompra> articulosCompra) {
+        this.articulosCompra = articulosCompra;
+    }
+
+ // Ayudan a mantener la relación bidireccional ArticuloCompra <-> Compra sincronizada
+
+    public void addArticuloCompra(ArticuloCompra ac) {
+        this.articulosCompra.add(ac);
+        // Asegura que el lado "compra" de la relación también esté configurado
+        ac.setCompra(this); 
+    }
+
+    public void removeArticuloCompra(ArticuloCompra ac) {
+        this.articulosCompra.remove(ac);
+        // Quita la referencia
+        ac.setCompra(null); 
     }
 
     // metodos
