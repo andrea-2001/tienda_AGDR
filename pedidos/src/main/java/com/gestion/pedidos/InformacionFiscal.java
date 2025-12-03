@@ -11,88 +11,70 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
+/**
+ * author
+ * since
+ * version
+ */
 @Entity
 @Table(name = "informacion_fiscal")
 public class InformacionFiscal {
 
+	   // NIF/CIF como clave primaria de la tabla
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
+    @Column(name = "nif_cif", length = 20)
+    private String nifCif;
 
-    @Column(name = "telefono", nullable = false, length = 20)
+    // Teléfono del cliente 
+    @Column(name = "telefono")
     private String telefono;
 
-    @Column(name = "direccion_fiscal", nullable = false, length = 255)
+    // Dirección fiscal del cliente 
+    @Column(name = "direccion_fiscal")
     private String direccionFiscal;
 
-    // relacion 1:1 con cliente
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", nullable = false, unique = true)
+    // Relación 1:1 bidireccional con Cliente, mappedBy indica que Cliente es el dueño
+    @OneToOne(mappedBy = "informacionFiscal", fetch = FetchType.LAZY) // LAZY para no cargar automáticamente
     private Cliente cliente;
 
+    // Constructor 
     public InformacionFiscal() {}
 
-    public int getId() {
-        return id;
-    }
+    // Getters y Setters
+    public String getNifCif() { return nifCif; }
+    public void setNifCif(String nifCif) { this.nifCif = nifCif; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public String getTelefono() {
-        return telefono;
-    }
+    public String getDireccionFiscal() { return direccionFiscal; }
+    public void setDireccionFiscal(String direccionFiscal) { this.direccionFiscal = direccionFiscal; }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public String getDireccionFiscal() {
-        return direccionFiscal;
-    }
-
-    public void setDireccionFiscal(String direccionFiscal) {
-        this.direccionFiscal = direccionFiscal;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    // metodos
-
+    // Métodos equals y hashCode basados en el NIF/CIF
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof InformacionFiscal)) return false;
-
-        InformacionFiscal info = (InformacionFiscal) o;
-
-        if (id == 0 && info.id == 0)
-            return super.equals(o);
-
-        return id == info.id;
+        InformacionFiscal that = (InformacionFiscal) o;
+        return Objects.equals(nifCif, that.nifCif);
     }
 
     @Override
     public int hashCode() {
-        return id != 0 ? Objects.hash(id) : System.identityHashCode(this);
+        return Objects.hash(nifCif);
     }
 
+    // toString 
     @Override
     public String toString() {
         return "InformacionFiscal{" +
-                "id=" + id +
+                "nifCif='" + nifCif + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", direccionFiscal='" + direccionFiscal + '\'' +
-                ", cliente_id=" + (cliente != null ? cliente.getId() : "N/A") +
+                ", clienteId=" + (cliente != null ? cliente.getId() : "null") +
                 '}';
     }
 }

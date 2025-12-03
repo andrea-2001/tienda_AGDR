@@ -1,4 +1,5 @@
 package com.gestion.pedidos;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,143 +23,100 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "compras")
 public class Compra {
 
+	 // Clave primaria autogenerada
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
-    @CreationTimestamp
-    @Column(name = "fecha_compra", nullable = false, updatable = false)
-    private LocalDateTime fechaCompra;
+    // Fecha de la compra, no puede ser nula
+    @Column(name = "fecha_compra", nullable = false)
+    private LocalDate fechaCompra;
 
+    // Estado de la compra
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false, length = 20)
+    @Column(name = "estado", nullable = false)
     private EstadoCompra estado;
 
-    @Column(name = "direccion_envio", nullable = false, length = 500)
-    private String direccion;
+    // Dirección de envío de la compra
+    @Column(name = "direccion_envio")
+    private String direccionEnvio;
 
-    @Column(name = "costo_envio", nullable = false)
-    private double envio;
+    // Precio total de la compra
+    @Column(name = "precio_total")
+    private Double precioTotal;
 
-    @Column(name = "precio_total", nullable = false)
-    private double precioTotal;
-
-    // relación 1:n con cliente
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", nullable = false)
+    // Relación N:1 con Cliente (muchas compras para un cliente)
+    @ManyToOne(fetch = FetchType.LAZY) // fetch LAZY para cargar solo cuando se necesite
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
-    
- // RELACIÓN N:N (Mapeada a través de la tabla de unión ArticuloCompra)
-    // Se mapea como una relación Uno a Muchos (1:N) con la entidad ArticuloCompra
+
+    // Relación 1:N con ArticuloCompra (una compra tiene muchos artículos)
     @OneToMany(mappedBy = "compra")
     private Set<ArticuloCompra> articulosCompra = new HashSet<>();
 
+    // Constructor: por defecto
     public Compra() {
         this.estado = EstadoCompra.PENDIENTE;
     }
 
- // Getters y Setters
-    public int getId() {
-        return id;
-    }
+    // Getters y Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public LocalDate getFechaCompra() { return fechaCompra; }
+    public void setFechaCompra(LocalDate fechaCompra) { this.fechaCompra = fechaCompra; }
 
-    public LocalDateTime getFechaCompra() {
-        return fechaCompra;
-    }
+    public EstadoCompra getEstado() { return estado; }
+    public void setEstado(EstadoCompra estado) { this.estado = estado; }
 
-    public EstadoCompra getEstado() {
-        return estado;
-    }
+    public String getDireccionEnvio() { return direccionEnvio; }
+    public void setDireccionEnvio(String direccionEnvio) { this.direccionEnvio = direccionEnvio; }
 
-    public void setEstado(EstadoCompra estado) {
-        this.estado = estado;
-    }
+    public Double getPrecioTotal() { return precioTotal; }
+    public void setPrecioTotal(Double precioTotal) { this.precioTotal = precioTotal; }
 
-    public String getDireccion() {
-        return direccion;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+    public Set<ArticuloCompra> getArticulosCompra() { return articulosCompra; }
+    public void setArticulosCompra(Set<ArticuloCompra> articulosCompra) { this.articulosCompra = articulosCompra; }
 
-    public double getEnvio() {
-        return envio;
-    }
-
-    public void setEnvio(double envio) {
-        this.envio = envio;
-    }
-
-    public double getPrecioTotal() {
-        return precioTotal;
-    }
-
-    public void setPrecioTotal(double precioTotal) {
-        this.precioTotal = precioTotal;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public Set<ArticuloCompra> getArticulosCompra() {
-        return articulosCompra;
-    }
-
-    public void setArticulosCompra(Set<ArticuloCompra> articulosCompra) {
-        this.articulosCompra = articulosCompra;
-    }
-
- // Ayudan a mantener la relación bidireccional ArticuloCompra <-> Compra sincronizada
-
+    // Métodos auxiliares para mantener la relación bidireccional
     public void addArticuloCompra(ArticuloCompra ac) {
-        this.articulosCompra.add(ac);
-        // Asegura que el lado "compra" de la relación también esté configurado
+        articulosCompra.add(ac);
         ac.setCompra(this); 
     }
 
     public void removeArticuloCompra(ArticuloCompra ac) {
-        this.articulosCompra.remove(ac);
-        // Quita la referencia
-        ac.setCompra(null); 
+        articulosCompra.remove(ac);
+        ac.setCompra(null); // rompe la relación
     }
 
-    // metodos
-	@Override
-	public int hashCode() {
-		return Objects.hash(cliente, direccion, envio, estado, fechaCompra, id, precioTotal);
-	}
+    // equals y hashCode basados en ID
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Compra)) return false;
+        Compra compra = (Compra) o;
+        return id != 0 && id == compra.id;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Compra other = (Compra) obj;
-		return Objects.equals(cliente, other.cliente) && Objects.equals(direccion, other.direccion)
-				&& Double.doubleToLongBits(envio) == Double.doubleToLongBits(other.envio) && estado == other.estado
-				&& Objects.equals(fechaCompra, other.fechaCompra) && id == other.id
-				&& Double.doubleToLongBits(precioTotal) == Double.doubleToLongBits(other.precioTotal);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-	@Override
-	public String toString() {
-		return "Compra [id=" + id + ", fechaCompra=" + fechaCompra + ", estado=" + estado + ", direccion=" + direccion
-				+ ", envio=" + envio + ", precioTotal=" + precioTotal + ", cliente=" + cliente + "]";
-	}
-    
-    
+    // toString 
+    @Override
+    public String toString() {
+        return "Compra{" +
+                "id=" + id +
+                ", fechaCompra=" + fechaCompra +
+                ", estado=" + estado +
+                ", direccionEnvio='" + direccionEnvio + '\'' +
+                ", precioTotal=" + precioTotal +
+                ", clienteId=" + (cliente != null ? cliente.getId() : "null") +
+                ", articulos=" + articulosCompra.size() + // solo muestra la cantidad de artículos
+                '}';
+    }
 }
