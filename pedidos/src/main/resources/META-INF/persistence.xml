@@ -12,7 +12,6 @@
         <class>com.gestion.pedidos.Compra</class>
         <class>com.gestion.pedidos.Articulo</class>
         <class>com.gestion.pedidos.ArticuloCompra</class>
-        <class>com.gestion.pedidos.ArticuloCompraId</class>
 
         <properties>
             <!-- Driver de la base de datos -->
