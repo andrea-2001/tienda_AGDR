@@ -7,12 +7,11 @@
     <persistence-unit name="gestion-pedidos-pu" transaction-type="RESOURCE_LOCAL">
 
         <!-- Entidades de tu proyecto -->
-        <class>com.gestion.pedidos.Cliente</class>
-        <class>com.gestion.pedidos.InformacionFiscal</class>
-        <class>com.gestion.pedidos.Compra</class>
-        <class>com.gestion.pedidos.Articulo</class>
-        <class>com.gestion.pedidos.ArticuloCompra</class>
-        <class>com.gestion.pedidos.ArticuloCompraId</class>
+        <class>com.gestion.pedidos.model.Cliente</class>
+        <class>com.gestion.pedidos.model.InformacionFiscal</class>
+        <class>com.gestion.pedidos.model.Compra</class>
+        <class>com.gestion.pedidos.model.Articulo</class>
+        <class>com.gestion.pedidos.model.ArticuloCompra</class>
 
         <properties>
             <!-- Driver de la base de datos -->
@@ -23,24 +22,32 @@
             <!-- URL de conexión con parámetros corregidos -->
             <property 
                 name="jakarta.persistence.jdbc.url"
-                value="jdbc:mariadb://localhost:3306/tienda_db?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC" />
+                value="jdbc:mariadb://localhost:3311/tienda_db?allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC" />
 
             <!-- Usuario de la base de datos -->
             <property 
                  name="jakarta.persistence.jdbc.user" 
-                 value="tu_usuario"/> 
+                 value="usuario1"/> 
 
             <!-- Contraseña de la base de datos -->
             <property 
                 name="jakarta.persistence.jdbc.password" 
-                value="tu_contraseña"/> 
+                value="Abcd1234"/> 
 
             <!-- Mostrar sentencias SQL en consola -->
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.format_sql" value="true" />
 
-            <!-- Estrategia de generación de esquema -->
-            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <!-- IMPORTANTE: Cambiar a update para que Hibernate cree las tablas -->
+            <property name="hibernate.hbm2ddl.auto" value="none" />
+
+            <!-- IMPORTANTE: Deshabilitar pluralización automática -->
+            <property name="hibernate.physical_naming_strategy" 
+                      value="org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl" />
+            
+            <!-- IMPORTANTE: Usar nombres exactos como están en las anotaciones -->
+            <property name="hibernate.implicit_naming_strategy" 
+                      value="org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl" />
 
             <!-- Configuraciones adicionales -->
             <property name="hibernate.connection.autocommit" value="false" />
