@@ -1,4 +1,17 @@
+package com.gestion.pedidos.model;
 
+import java.io.Serializable;
+import java.util.Objects;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 /**
  * Representa la relación entre Artículo y Compra en el sistema de gestión de pedidos.
  * @author Andrea
@@ -138,3 +151,4 @@ public class ArticuloCompra {
                 '}';
     }
 }
+
