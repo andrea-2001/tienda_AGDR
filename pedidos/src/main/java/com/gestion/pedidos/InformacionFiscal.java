@@ -1,26 +1,24 @@
-package com.gestion.pedidos;
+package com.gestion.pedidos.model;
 
 import java.util.Objects;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 /**
- * author
- * since
- * version
+ * Representa la informacion fiscal de un cliente en el sistema.
+ * Mantiene la relación bidireccional con Cliente.
+ * @author Andrea
+ * @since 2025-12-15
+ * @version 1.0
  */
 @Entity
 @Table(name = "informacion_fiscal")
 public class InformacionFiscal {
 
-	   // NIF/CIF como clave primaria de la tabla
+	// NIF/CIF como clave primaria de la tabla
     @Id
     @Column(name = "nif_cif", length = 20)
     private String nifCif;
