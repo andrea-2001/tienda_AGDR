@@ -1,23 +1,17 @@
-package com.gestion.pedidos;
+package com.gestion.pedidos.model;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.CreationTimestamp;
+/**
+ * Representa una compra en el sistema.
+ * @author Andrea
+ * @since 2025-12-15
+ * @version 1.0
+ */
 
 @Entity
 @Table(name = "compras")
@@ -33,7 +27,7 @@ public class Compra {
     private LocalDate fechaCompra;
 
     // Estado de la compra
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) //se guarda el estado como cadena en la bd
     @Column(name = "estado", nullable = false)
     private EstadoCompra estado;
 
@@ -47,16 +41,17 @@ public class Compra {
 
     // Relación N:1 con Cliente (muchas compras para un cliente)
     @ManyToOne(fetch = FetchType.LAZY) // fetch LAZY para cargar solo cuando se necesite
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id") // fk de cliente
     private Cliente cliente;
 
     // Relación 1:N con ArticuloCompra (una compra tiene muchos artículos)
     @OneToMany(mappedBy = "compra")
-    private Set<ArticuloCompra> articulosCompra = new HashSet<>();
+    private Set<ArticuloCompra> articulosCompra = new HashSet<>(); //colecion de artículos en la compra
 
     // Constructor: por defecto
     public Compra() {
         this.estado = EstadoCompra.PENDIENTE;
+        this.fechaCompra = LocalDate.now(); // fecha por defecto para evitar errores de no-null
     }
 
     // Getters y Setters
@@ -83,11 +78,12 @@ public class Compra {
     public void setArticulosCompra(Set<ArticuloCompra> articulosCompra) { this.articulosCompra = articulosCompra; }
 
     // Métodos auxiliares para mantener la relación bidireccional
+    //añade un articulo a la compra
     public void addArticuloCompra(ArticuloCompra ac) {
         articulosCompra.add(ac);
         ac.setCompra(this); 
     }
-
+    //elimina un articulo de la compra
     public void removeArticuloCompra(ArticuloCompra ac) {
         articulosCompra.remove(ac);
         ac.setCompra(null); // rompe la relación
