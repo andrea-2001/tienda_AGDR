@@ -11,6 +11,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * Representa un artículo en el sistema de gestión de pedidos.
+ * @author Andrea
+ * @since 2025-12-15
+ * @version 1.0
+ */
+
 @Entity
 @Table(name = "articulo")
 public class Articulo {
@@ -71,6 +78,7 @@ public class Articulo {
         ac.setArticulo(this); 
     }
 
+    // Método para eliminar una relación ArticuloCompra
     public void removeArticuloCompra(ArticuloCompra ac) {
         this.articulosCompra.remove(ac);
         ac.setArticulo(null); // limpia la referencia para evitar inconsistencias
