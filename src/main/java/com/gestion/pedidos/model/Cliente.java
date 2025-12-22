@@ -14,8 +14,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+
 /**
  * Representa un cliente en el sistema.
+ * @author Andrea
+ * @since 2025-12-15
+ * @version 1.0
  */
 
 @Entity
@@ -83,6 +87,7 @@ public class Cliente {
         }
         this.informacionFiscal = info;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

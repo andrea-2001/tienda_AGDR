@@ -13,7 +13,7 @@
         <class>com.gestion.pedidos.model.Articulo</class>
         <class>com.gestion.pedidos.model.ArticuloCompra</class>
 
-         <properties>
+           <properties>
             <!-- Driver de la base de datos -->
             <property 
                 name="jakarta.persistence.jdbc.driver"

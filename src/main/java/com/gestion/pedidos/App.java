@@ -15,7 +15,6 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
-
 /**
  * Gestión de Pedidos app principal.
  * @author Daniel
