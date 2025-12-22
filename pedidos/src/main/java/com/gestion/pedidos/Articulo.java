@@ -1,4 +1,4 @@
-package com.gestion.pedidos;
+package com.gestion.pedidos.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
