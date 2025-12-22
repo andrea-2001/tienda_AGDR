@@ -1,45 +1,42 @@
 -- =======================================================
---  CREAR BASE DE DATOS Y USARLA
+-- BORRAR Y CREAR BASE DE DATOS LIMPIA
 -- =======================================================
-CREATE DATABASE IF NOT EXISTS tienda_db;
+DROP DATABASE IF EXISTS tienda_db;
+CREATE DATABASE tienda_db;
 USE tienda_db;
 
 -- =======================================================
---  TABLA: INFORMACION_FISCAL
+-- TABLA: INFORMACION_FISCAL
 -- =======================================================
-CREATE TABLE IF NOT EXISTS informacion_fiscal (
+CREATE TABLE informacion_fiscal (
     nif_cif VARCHAR(20) PRIMARY KEY,
     telefono VARCHAR(20),
     direccion_fiscal VARCHAR(200)
 );
 
--- -------------------------------------------------------
---  Crear registro fiscal especial para el cliente anónimo
--- -------------------------------------------------------
+-- Registro fiscal especial para el cliente anónimo
 INSERT INTO informacion_fiscal (nif_cif, telefono, direccion_fiscal)
 VALUES ('ANON-NIF', '', '')
 ON DUPLICATE KEY UPDATE telefono = telefono;
 
 -- =======================================================
---  TABLA: CLIENTE
+-- TABLA: CLIENTE
 -- =======================================================
-CREATE TABLE IF NOT EXISTS cliente (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE cliente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
     fecha_regist DATE NOT NULL,
-    nif_cif VARCHAR(20) NOT NULL,
+    nif_cif VARCHAR(20) NULL,
 
     CONSTRAINT fk_cliente_fiscal
         FOREIGN KEY (nif_cif)
         REFERENCES informacion_fiscal(nif_cif)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT  -- No se puede borrar info fiscal si tiene clientes
+        ON DELETE RESTRICT
 );
 
--- -------------------------------------------------------
---  Crear cliente ANÓNIMO que absorberá compras de clientes borrados
--- -------------------------------------------------------
+-- Cliente ANÓNIMO que absorberá compras de clientes borrados
 INSERT INTO cliente (id, nombre, email, fecha_regist, nif_cif)
 VALUES (1, 'Cliente Anónimo', 'anonimo@anonimo.com', NOW(), 'ANON-NIF')
 ON DUPLICATE KEY UPDATE nombre = nombre;
@@ -47,44 +44,43 @@ ON DUPLICATE KEY UPDATE nombre = nombre;
 ALTER TABLE cliente AUTO_INCREMENT = 2;
 
 -- =======================================================
---  TABLA: ARTICULO
+-- TABLA: ARTICULO
 -- =======================================================
-CREATE TABLE IF NOT EXISTS articulo (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(120) NOT NULL,
-    descripcion TEXT,
+CREATE TABLE articulo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion VARCHAR(500),
     precio DECIMAL(10,2) NOT NULL,
-    stock INTEGER NOT NULL DEFAULT 0
+    stock INT NOT NULL DEFAULT 0
 );
 
 -- =======================================================
---  TABLA: COMPRA
+-- TABLA: COMPRA
 -- =======================================================
-CREATE TABLE IF NOT EXISTS compra (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE compras (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     fecha_compra DATE NOT NULL,
-    estado VARCHAR(50),
+    estado ENUM('ENTREGADO','ENVIADO','PENDIENTE') DEFAULT 'PENDIENTE',
     direccion_envio VARCHAR(200),
     precio_total DECIMAL(10,2),
 
-    cliente_id INTEGER NOT NULL DEFAULT 1,  -- Por defecto cliente anónimo
+    cliente_id INT NOT NULL DEFAULT 1,
 
     CONSTRAINT fk_compra_cliente
         FOREIGN KEY (cliente_id)
         REFERENCES cliente(id)
         ON UPDATE CASCADE
-        ON DELETE RESTRICT  -- No se puede borrar cliente si tiene compras
+        ON DELETE RESTRICT
 );
 
 -- =======================================================
---  TABLA INTERMEDIA: ARTICULO_COMPRA
+-- TABLA INTERMEDIA: ARTICULO_COMPRA (N:N)
 -- =======================================================
-CREATE TABLE IF NOT EXISTS articulo_compra (
-    articulo_id INTEGER NOT NULL,
-    compra_id INTEGER NOT NULL,
-    unidades INTEGER NOT NULL,
+CREATE TABLE articulo_compra (
+    articulo_id INT NOT NULL,
+    compra_id INT NOT NULL,
+    unidades INT NOT NULL,
     precio_compra DECIMAL(10,2) NOT NULL,
-
     PRIMARY KEY (articulo_id, compra_id),
 
     CONSTRAINT fk_ac_articulo
@@ -95,7 +91,7 @@ CREATE TABLE IF NOT EXISTS articulo_compra (
 
     CONSTRAINT fk_ac_compra
         FOREIGN KEY (compra_id)
-        REFERENCES compra(id)
+        REFERENCES compras(id)
         ON UPDATE CASCADE
         ON DELETE CASCADE
 );

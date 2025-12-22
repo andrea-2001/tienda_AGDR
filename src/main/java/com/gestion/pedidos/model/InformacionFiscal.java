@@ -9,28 +9,35 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+/**
+ * Representa la informacion fiscal de un cliente en el sistema.
+ * Mantiene la relación bidireccional con Cliente.
+ * @author Andrea
+ * @since 2025-12-15
+ * @version 1.0
+ */
 @Entity
 @Table(name = "informacion_fiscal")
 public class InformacionFiscal {
 
-    // NIF/CIF como clave primaria de la tabla
+	// NIF/CIF como clave primaria de la tabla
     @Id
     @Column(name = "nif_cif", length = 20)
     private String nifCif;
 
-    // Teléfono del cliente
+    // Teléfono del cliente 
     @Column(name = "telefono")
     private String telefono;
 
-    // Dirección fiscal del cliente
+    // Dirección fiscal del cliente 
     @Column(name = "direccion_fiscal")
     private String direccionFiscal;
 
-    // Relación 1:1 bidireccional con Cliente
-    @OneToOne(mappedBy = "informacionFiscal", fetch = FetchType.LAZY)
+    // Relación 1:1 bidireccional con Cliente, mappedBy indica que Cliente es el dueño
+    @OneToOne(mappedBy = "informacionFiscal", fetch = FetchType.LAZY) // LAZY para no cargar automáticamente
     private Cliente cliente;
 
-    // Constructor
+    // Constructor 
     public InformacionFiscal() {}
 
     // Getters y Setters
@@ -46,7 +53,7 @@ public class InformacionFiscal {
     public Cliente getCliente() { return cliente; }
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    // equals y hashCode basados en NIF/CIF
+    // Métodos equals y hashCode basados en el NIF/CIF
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,6 +67,7 @@ public class InformacionFiscal {
         return Objects.hash(nifCif);
     }
 
+    // toString 
     @Override
     public String toString() {
         return "InformacionFiscal{" +
@@ -70,5 +78,3 @@ public class InformacionFiscal {
                 '}';
     }
 }
-
-

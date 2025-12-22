@@ -27,7 +27,7 @@ CREATE TABLE `articulo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(150) NOT NULL,
   `descripcion` varchar(500) DEFAULT NULL,
-  `precio` double NOT NULL,
+  `precio` decimal(10,2) NOT NULL,
   `stock` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
@@ -39,6 +39,8 @@ CREATE TABLE `articulo` (
 
 LOCK TABLES `articulo` WRITE;
 /*!40000 ALTER TABLE `articulo` DISABLE KEYS */;
+INSERT INTO `articulo` VALUES
+(1,'Camiseta','Camiseta algodón talla M',19.95,100);
 /*!40000 ALTER TABLE `articulo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,12 +55,11 @@ CREATE TABLE `articulo_compra` (
   `articulo_id` int(11) NOT NULL,
   `compra_id` int(11) NOT NULL,
   `unidades` int(11) NOT NULL,
-  `precio_compra` double NOT NULL,
+  `precio_compra` decimal(10,2) NOT NULL,
   PRIMARY KEY (`articulo_id`,`compra_id`),
-  KEY `FKcaepxe3wtyfajbuluyplymki9` (`compra_id`),
-  CONSTRAINT `FKcaepxe3wtyfajbuluyplymki9` FOREIGN KEY (`compra_id`) REFERENCES `compras` (`id`),
+  KEY `fk_ac_compra` (`compra_id`),
   CONSTRAINT `fk_ac_articulo` FOREIGN KEY (`articulo_id`) REFERENCES `articulo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_ac_compra` FOREIGN KEY (`compra_id`) REFERENCES `compra` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_ac_compra` FOREIGN KEY (`compra_id`) REFERENCES `compras` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -68,6 +69,8 @@ CREATE TABLE `articulo_compra` (
 
 LOCK TABLES `articulo_compra` WRITE;
 /*!40000 ALTER TABLE `articulo_compra` DISABLE KEYS */;
+INSERT INTO `articulo_compra` VALUES
+(1,1,3,19.95);
 /*!40000 ALTER TABLE `articulo_compra` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +91,7 @@ CREATE TABLE `cliente` (
   UNIQUE KEY `email` (`email`),
   KEY `fk_cliente_fiscal` (`nif_cif`),
   CONSTRAINT `fk_cliente_fiscal` FOREIGN KEY (`nif_cif`) REFERENCES `informacion_fiscal` (`nif_cif`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,37 +101,9 @@ CREATE TABLE `cliente` (
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
 INSERT INTO `cliente` VALUES
-(1,'Cliente Anónimo','anonimo@anonimo.com','2025-12-07','ANON-NIF');
+(1,'Cliente Anónimo','anonimo@anonimo.com','2025-12-07','ANON-NIF'),
+(2,'Juan Pérez','juan.perez@email.com','2025-12-07','NIF_1765120041819');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `compra`
---
-
-DROP TABLE IF EXISTS `compra`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `compra` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fecha_compra` date NOT NULL,
-  `estado` enum('ENTREGADO','ENVIADO','PENDIENTE') DEFAULT 'PENDIENTE',
-  `direccion_envio` varchar(200) DEFAULT NULL,
-  `precio_total` decimal(10,2) DEFAULT NULL,
-  `cliente_id` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  KEY `fk_compra_cliente` (`cliente_id`),
-  CONSTRAINT `fk_compra_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `compra`
---
-
-LOCK TABLES `compra` WRITE;
-/*!40000 ALTER TABLE `compra` DISABLE KEYS */;
-/*!40000 ALTER TABLE `compra` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -140,14 +115,14 @@ DROP TABLE IF EXISTS `compras`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `compras` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `direccion_envio` varchar(255) DEFAULT NULL,
-  `estado` enum('ENTREGADO','ENVIADO','PENDIENTE') NOT NULL,
   `fecha_compra` date NOT NULL,
-  `precio_total` double DEFAULT NULL,
-  `cliente_id` int(11) DEFAULT NULL,
+  `estado` enum('ENTREGADO','ENVIADO','PENDIENTE') DEFAULT 'PENDIENTE',
+  `direccion_envio` varchar(200) DEFAULT NULL,
+  `precio_total` decimal(10,2) DEFAULT NULL,
+  `cliente_id` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
-  KEY `FKa51hfxdpkax4ivr7aev3sms90` (`cliente_id`),
-  CONSTRAINT `FKa51hfxdpkax4ivr7aev3sms90` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`)
+  KEY `fk_compra_cliente` (`cliente_id`),
+  CONSTRAINT `fk_compra_cliente` FOREIGN KEY (`cliente_id`) REFERENCES `cliente` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -157,6 +132,8 @@ CREATE TABLE `compras` (
 
 LOCK TABLES `compras` WRITE;
 /*!40000 ALTER TABLE `compras` DISABLE KEYS */;
+INSERT INTO `compras` VALUES
+(1,'2025-12-07','PENDIENTE','Calle Falsa 123',59.85,2);
 /*!40000 ALTER TABLE `compras` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -169,8 +146,8 @@ DROP TABLE IF EXISTS `informacion_fiscal`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `informacion_fiscal` (
   `nif_cif` varchar(20) NOT NULL,
-  `telefono` varchar(255) DEFAULT NULL,
-  `direccion_fiscal` varchar(255) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `direccion_fiscal` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`nif_cif`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -182,7 +159,8 @@ CREATE TABLE `informacion_fiscal` (
 LOCK TABLES `informacion_fiscal` WRITE;
 /*!40000 ALTER TABLE `informacion_fiscal` DISABLE KEYS */;
 INSERT INTO `informacion_fiscal` VALUES
-('ANON-NIF','','');
+('ANON-NIF','',''),
+('NIF_1765120041819','600123456','Calle Falsa 123');
 /*!40000 ALTER TABLE `informacion_fiscal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,4 +177,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
--- Dump completed on 2025-12-07 14:16:17
+-- Dump completed on 2025-12-22 13:30:27
