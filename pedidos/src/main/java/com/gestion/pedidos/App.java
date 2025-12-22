@@ -10,6 +10,12 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceException;
 
+/**
+ * Gestión de Pedidos app principal.
+ * @author Daniel
+ * @since 2025-12-15
+ * @version 1.0
+ */
 public class App {
 
     public static void main(String[] args) {
@@ -82,22 +88,26 @@ public class App {
     	            clienteSimple.setEmail("simple@ejemplo.com");
     	            clienteSimple.setNifCif("NIF_" + System.currentTimeMillis());
 
+    	            InformacionFiscal infoSimple = new InformacionFiscal();
+    	            infoSimple.setNifCif(clienteSimple.getNifCif());
+    	            clienteSimple.setInformacionFiscal(infoSimple);
+
     	            em.persist(clienteSimple);
 
     	            System.out.println("[CREADO] Cliente simple: " + clienteSimple.getNombre());
 
 
     	            // 2) Crea CLIENTE con información fiscal
-    	            Cliente clienteCompleto = new Cliente();
-    	            clienteCompleto.setNombre("ClienteConFiscal");
-    	            clienteCompleto.setEmail("completo@ejemplo.com");
-    	            clienteCompleto.setNifCif("COMPLETO_001");
-
+    	            String nifCompleto = "COMPLETO_001";
     	            InformacionFiscal info = new InformacionFiscal();
     	            info.setTelefono("600000123");
     	            info.setDireccionFiscal("Calle Fiscal, 123 Madrid");
+    	            info.setNifCif(nifCompleto);
 
-    	            // Asociación bidireccional 1:1
+    	            Cliente clienteCompleto = new Cliente();
+    	            clienteCompleto.setNombre("ClienteConFiscal");
+    	            clienteCompleto.setEmail("completo@ejemplo.com");
+    	            clienteCompleto.setNifCif(nifCompleto);
     	            clienteCompleto.setInformacionFiscal(info);
 
     	            em.persist(clienteCompleto);
@@ -122,6 +132,8 @@ public class App {
     	            compraNueva.setCliente(clienteCompleto);
     	            compraNueva.setDireccionEnvio("Dirección temporal");
     	            compraNueva.setPrecioTotal(24.90);
+    	            // fechaCompra is not nullable in the entity => set a value
+    	            compraNueva.setFechaCompra(LocalDate.now());
     	            compraNueva.setEstado(EstadoCompra.PENDIENTE);
 
     	            em.persist(compraNueva);
@@ -169,3 +181,4 @@ public class App {
     	    }
 
     	}
+}
